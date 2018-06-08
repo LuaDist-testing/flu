@@ -1,0 +1,8 @@
+syntax: glob
+
+.*.swp
+*.orig
+
+errno.o
+posix_structs.o
+flu.so
