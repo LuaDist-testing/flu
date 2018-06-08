@@ -513,7 +513,7 @@ void lua__push__timeval(lua_State* L, struct timeval* time)
 	if (!time)
 	{
 		*ptime = (struct timeval*)malloc(sizeof(struct timeval));
-		memset(*ptime, 0, sizeof(struct statvfs));
+		memset(*ptime, 0, sizeof(struct timeval));
 	}
 	else
 		*ptime = time;

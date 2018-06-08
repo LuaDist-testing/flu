@@ -1,140 +1,54 @@
-local charset = 'UTF-8'
-
-require 'markdown'
-
-local file_index = "index.html"
-local file_manual = "manual.html"
-local file_examples = "examples.html"
-
-local function manlink(name)
-	return '<a href="http://www.lua.org/manual/5.1/manual.html#pdf-'..name..'"><code>'..name..'</code></a>'
-end
-
-local function manclink(name)
-	return '<a href="http://www.lua.org/manual/5.1/manual.html#'..name..'"><code>'..name..'</code></a>'
-end
 
 ------------------------------------------------------------------------------
 
--- generate logo
---os.execute('convert -resize 128x128 logo.ps logo.png')
---os.execute('convert -resize 384x384 logo.ps -crop 256x128+64+0 logo.png')
---os.execute('convert -resize 448x448 logo.ps -crop 128x128+300+40 logo.png')
-os.execute('convert -resize 448x448 logo.ps -crop 128x128+300+40 logo.png')
+index {
+	title = 'Flu',
+	header = [[Filesystems in Lua Userspace]],
+	logo = { alt = 'Flu' },
+	index = {
+		{page='index', title="home"},
+		{page='index', section='download', title="download"},
+		{page='index', section='installation', title="installation"},
+		{page='manual', title="manual"},
+		{page='examples', title="examples"},
+	},
+}
 
 ------------------------------------------------------------------------------
 
-function print(...)
-	local t = {...}
-	for i=1,select('#', ...) do
-		t[i] = tostring(t[i])
-	end
-	io.write(table.concat(t, '\t')..'\n')
-end
+header('index')
 
-function header()
-	print([[
-<?xml version="1.0" encoding="]]..charset..[["?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
-lang="en">
-<head>
-<title>Flu</title>
-<meta http-equiv="Content-Type" content="text/html; charset=]]..charset..[["/>
-<link rel="stylesheet" href="doc.css" type="text/css"/>
-</head>
-<body>
-]])
-	print([[
-<div class="chapter" id="header">
-<img width="128" height="128" alt="Flu" src="logo.png"/>
-<p>Filesystems in Lua Userspace</p>
-<p class="bar">
-<a href="]]..file_index..[[">home</a> &middot;
-<a href="]]..file_index..[[#download">download</a> &middot;
-<a href="]]..file_index..[[#installation">installation</a> &middot;
-<a href="]]..file_manual..[[">manual</a> &middot;
-<a href="]]..file_examples..[[">examples</a>
-</p>
-</div>
-]])
-end
-
-function footer()
-	print([[
-<div class="chapter" id="footer">
-<small>Last update: ]]..os.date"%Y-%m-%d %H:%M:%S %Z"..[[</small>
-</div>
-]])
-	print[[
-</body>
-</html>
-]]
-end
-
-local chapterid = 0
-
-function chapter(title, text, sections, raw)
-	chapterid = chapterid+1
-	local text = text:gsub("%%chapterid%%", tostring(chapterid))
-	if not raw then
-		text = markdown(text)
-	end
-	if sections then
-		for _,section in ipairs(sections) do
-			section = section:gsub("%%chapterid%%", tostring(chapterid))
-			text = text..[[
-<div class="section">
-]]..markdown(section)..[[
-</div>]]
-		end
-	end
-	print([[
-<div class="chapter">
-<h1>]]..tostring(chapterid).." - "..title..[[</h1>
-]]..text..[[
-</div>
-]])
-end
-
-------------------------------------------------------------------------------
-
-io.output(io.open(file_index, "wb"))
-
-header()
-
-chapter("About Flu", [[
+chapter('about', "About Flu", [[
 Flu is a Lua binding for [FUSE](http://fuse.sourceforge.net/), which is a library allowing creation of filesystem drivers run in userspace. Flu is a high level binding, using basic Lua types rather than userdata whenever possible.
 
 Flu tries to be complete, but is not supporting obsolete APIs. The binding is closely following the FUSE API, so in most case you can use FUSE documentation if the present page is not clear enough. The missing functions are missing because I've not used them yet. I can add them on request (a use case could be helpful for non-trivial ones).
 
 ## Support
 
-All support is done through the [Lua mailing list](http://www.lua.org/lua-l.html). If the traffic becomes too important a specialized mailing list will be created.
+All support is done through the [Lua mailing list](http://www.lua.org/lua-l.html).
 
 Feel free to ask for further developments. I can't guarantee that I'll develop everything you ask, but I want my code to be as useful as possible, so I'll do my best to help you. You can also send me request or bug reports (for code and documentation) directly at [jerome.vuarand@gmail.com](mailto:jerome.vuarand@gmail.com).
 
 ## Credits
 
-This module is written and maintained by [Jérôme Vuarand](mailto:jerome.vuarand@gmail.com). It is a fork of [LUSE](http://luse.luaforge.net/), a previous Lua-FUSE binding from the same author. LUSE was low level and rather complicated to use, while Flu tries its best to be simple.
+This module is written and maintained by [Jérôme Vuarand](mailto:jerome.vuarand@gmail.com). It is a fork of [LUSE](http://piratery.net/luse/), a previous Lua-FUSE binding from the same author. LUSE was low level and rather complicated to use, while Flu tries its best to be simple.
 
 Flu is available under a [MIT-style license](LICENSE.txt).
 ]])
 
-chapter('<a name="download">Download</a>', [[
+chapter('download', "Download", [[
 Flu sources are available in its [Mercurial repository](http://hg.piratery.net/flu/):
 
     hg clone http://hg.piratery.net/flu
 
-Tarballs of the latest code can be downloaded directly from there: as [gz](http://hg.piratery.net/flu/archive/tip.tar.gz), [bz2](http://hg.piratery.net/flu/archive/tip.tar.bz2) or [zip](http://hg.piratery.net/flu/archive/tip.zip).
+Tarballs of the latest code can be downloaded directly from there: as [gz](http://hg.piratery.net/flu/get/tip.tar.gz), [bz2](http://hg.piratery.net/flu/get/tip.tar.bz2) or [zip](http://hg.piratery.net/flu/get/tip.zip).
 
 Finally, I published some rockspecs:
 
     luarocks install flu
 ]])
 
-chapter('<a name="installation">Installation</a>', [[
+chapter('installation', "Installation", [[
 To build Flu from sources, edit the Makefile and then run make in the top directory:
 
     $ vi Makefile
@@ -148,9 +62,7 @@ footer()
 
 ------------------------------------------------------------------------------
 
-io.output(io.open(file_manual, "wb"))
-
-header()
+header('manual')
 
 local functions = {
 	{
@@ -572,17 +484,15 @@ for _,section in ipairs(functions) do
 end
 manual = markdown(manual)
 manual = manual..funcstr
-chapter('<a name="manual">Manual</a>', manual, nil, true)
+chapter('manual', "Manual", manual, nil, true)
 
 footer()
 
 ------------------------------------------------------------------------------
 
-io.output(io.open(file_examples, "wb"))
+header('examples')
 
-header()
-
-chapter('<a name="examples">Examples</a>', [[
+chapter('examples', "Examples", [[
 Here are some filesystem examples. [`hellofs`](#hellofs) is just a minimal example. [`luafs`](#luafs) is a basic filesystem that exposes a Lua table as a directory. It can be used as a model to expose some data from a Lua state in your own applications.]]--[[ [`fwfs`](#fwfs) is a forwarding filesystem, that can be used as a base to make on the fly operations on file I/O.
 ]], { [[
 ## <a name="hellofs">%chapterid%.1 - hellofs</a>

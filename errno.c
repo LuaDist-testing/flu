@@ -55,7 +55,7 @@ static int errno__tostring(lua_State* L)
 }
 
 static const luaL_reg errno_mt[] = {
-//	{"__tostring", errno__tostring},
+	{"__tostring", errno__tostring},
 	{0, 0},
 };
 

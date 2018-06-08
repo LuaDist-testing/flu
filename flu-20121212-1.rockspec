@@ -1,16 +1,16 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = 'Flu'
-version = '20121106-1'
+version = '20121212-1'
 -- LuaDist source
 source = {
-  tag = "20121106-1",
+  tag = "20121212-1",
   url = "git://github.com/LuaDist-testing/flu.git"
 }
 -- Original source
 -- source = {
--- 	url = 'http://hg.piratery.net/flu/get/cc8649079e3a29ec95a5fe8afbe156c8bd016ccd.tar.gz',
--- 	dir = 'doub-flu-cc8649079e3a',
+-- 	url = 'http://hg.piratery.net/flu/get/2eff0d56e873a5b4cfa1c775c32a0d9e33ab424f.tar.gz',
+-- 	dir = 'doub-flu-2eff0d56e873',
 -- }
 description = {
 	summary = "Filesystems in Lua Userspace.",
