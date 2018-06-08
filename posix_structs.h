@@ -12,8 +12,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-
-#define LUA_LIB
 #include <lua.h>
 
 void lua__push__stat_mode(lua_State* L, mode_t m);

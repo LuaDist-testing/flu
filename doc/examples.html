@@ -28,13 +28,13 @@ lang="en">
 <p>Here are some filesystem examples. <a href="#hellofs"><code>hellofs</code></a> is just a minimal example. <a href="#luafs"><code>luafs</code></a> is a basic filesystem that exposes a Lua table as a directory. It can be used as a model to expose some data from a Lua state in your own applications.</p>
 <div class="section">
 
-<h2><a name="hellofs">5.1 - hellofs</a></h2>
+<h2>5.1 - hellofs</h2>
 
 <p><code>hellofs</code> is the Hello World! of FUSE filesystems. It creates a directory with a single file called <code>hello</code> that contain the string <code>"Hello World!"</code>.</p>
 
 <p>Example:</p>
-<pre><code>&lt;pre&gt;
-$ mkdir tmpdir
+
+<pre><code>$ mkdir tmpdir
 $ ./hellofs.lua tmpdir
 $ ls tmpdir
 hello
@@ -43,16 +43,17 @@ Hello World!
 $ fusermount -u tmpdir
 </code></pre>
 
-<p>Source code: <a href="hellofs.lua">hellofs.lua</a></p>
+<p>Source code: <a href="http://piratery.net/flu/hellofs.lua">hellofs.lua</a></p>
 
 
 </div><div class="section">
 
-<h2><a name="luafs">5.2 - luafs</a></h2>
+<h2>5.2 - luafs</h2>
 
 <p><code>luafs</code> expose a table as a directory. The subtables are exposed as subdirectories, while the string fields are exposed as regular files. You can create new files, and write to them: that will create new strings in the table hierarchy.</p>
 
 <p>Example:</p>
+
 <pre><code>$ mkdir tmpdir
 $ ./luafs.lua tmpdir
 $ ls tmpdir
@@ -72,13 +73,13 @@ foo
 $ fusermount -u tmpdir
 </code></pre>
 
-<p>Source code: <a href="luafs.lua">luafs.lua</a></p>
+<p>Source code: <a href="http://piratery.net/flu/luafs.lua">luafs.lua</a></p>
 
 
 </div></div>
 
 <div class="chapter" id="footer">
-<small>Last update: 2012-12-12 01:42:14 GMT</small>
+<small>Last update: 2015-03-31 12:14:05 BST</small>
 </div>
 
 </body>

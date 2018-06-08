@@ -16,10 +16,10 @@
 #include <string.h>
 #include <fuse.h>
 #include <attr/xattr.h>
-#define LUA_LIB
 #include <lua.h>
 #include <lauxlib.h>
 
+#include "compat.h"
 #include "posix_structs.h"
 
 /****************************************************************************/
@@ -498,7 +498,7 @@ static int fuse__listxattr(const char* path, char* list, size_t size)
 		size_t len, i;
 		int ok;
 		ok = 1;
-		len = lua_objlen(L, -1);
+		len = rawlen(L, -1);
 		for (i=1; i<=len; ++i)
 		{
 			lua_rawgeti(L, -1, i);
@@ -716,7 +716,7 @@ static int lua__main(lua_State *L)
 	luaL_checktype(L, 2, LUA_TTABLE);
 	lua_settop(L, 2);
 	
-	largc = lua_objlen(L, 1);
+	largc = rawlen(L, 1);
 	cargc = 1;
 	lua_newtable(L);
 	argv = (char**)lua_newuserdata(L, sizeof(char*) * (largc + cargc + 1));
@@ -728,7 +728,7 @@ static int lua__main(lua_State *L)
 		char* udata;
 		lua_rawgeti(L, 1, i+1);
 		if (!lua_isstring(L, -1))
-			return luaL_typerror(L, 1, "array of strings");
+			return typeerror(L, 1, "array of strings");
 		str = lua_tolstring(L, -1, &len);
 		udata = (char*)lua_newuserdata(L, len+1);
 		memcpy(udata, str, len+1);
@@ -840,7 +840,7 @@ static int lua__get_context(lua_State *L)
 	if (lua_gettop(L) == 0)
 		lua_createtable(L, 0, 3);
 	else if (lua_type(L, 1)!=LUA_TTABLE)
-		return luaL_typerror(L, 1, "table or nil");
+		return typeerror(L, 1, "table or nil");
 	lua_pushnumber(L, context->uid); lua_setfield(L, -2, "uid");
 	lua_pushnumber(L, context->gid); lua_setfield(L, -2, "gid");
 	lua_pushnumber(L, context->pid); lua_setfield(L, -2, "pid");
@@ -849,15 +849,26 @@ static int lua__get_context(lua_State *L)
 
 /****************************************************************************/
 
-static const luaL_reg functions[] = {
+static const luaL_Reg functions[] = {
 	{"main", lua__main},
 	{"get_context", lua__get_context},
 	{0, 0},
 };
 
-LUAMOD_API int luaopen_module(lua_State *L)
+FLU_API int luaopen_module(lua_State *L)
 {
-	luaL_register(L, lua_tostring(L, 1), functions);
+#if LUA_VERSION_NUM==502 || LUA_VERSION_NUM==503
+	lua_newtable(L);
+#elif LUA_VERSION_NUM==501
+	{
+		static luaL_Reg empty[] = { {0, 0} };
+		luaL_register(L, lua_tostring(L, 1), empty);
+	}
+#else
+#error unsupported Lua version
+#endif
+	
+	setfuncs(L, functions, 0);
 	
 	lua_pushnumber(L, FUSE_USE_VERSION);
 	lua_setfield(L, -2, "FUSE_USE_VERSION");
@@ -865,7 +876,11 @@ LUAMOD_API int luaopen_module(lua_State *L)
 	push_errno_table(L);
 	lua_setfield(L, -2, "errno");
 	
+#if LUA_VERSION_NUM==502 || LUA_VERSION_NUM==503
+	return 1;
+#else
 	return 0;
+#endif
 }
 
 /*

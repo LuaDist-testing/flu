@@ -1,10 +1,11 @@
 # FUSE version. You can compile for different FUSE versions. Supported
 # versions are: 25, 26.
 FUSE_VERSION=26
+LUA_VERSION=5.2
 
-PREFIX?=/usr/local
-INSTALL_BIN=$(PREFIX)/lib/lua/5.1
-CPPFLAGS+=-Wall -Wextra -Werror -O2 -Wno-unused-function "-DLUAMOD_API=__attribute__((visibility (\"default\")))"
+PREFIX?=/usr
+INSTALL_BIN=$(PREFIX)/lib/lua/$(LUA_VERSION)
+CPPFLAGS+=-Wall -Wextra -Werror -O2 -Wno-unused-function
 CFLAGS+=-fPIC
 LDFLAGS+=-fvisibility=hidden
 
@@ -12,9 +13,10 @@ LDFLAGS+=-fvisibility=hidden
 build: flu.so
 
 flu.so: CPPFLAGS+=-DFUSE_USE_VERSION=$(FUSE_VERSION)
+flu.so: CPPFLAGS+="-DFLU_API=__attribute__((visibility (\"default\")))"
 flu.so: CPPFLAGS+=-Dluaopen_module=luaopen_flu
 flu.so: LDLIBS+=-lfuse
-flu.so: errno.o posix_structs.o
+flu.so: errno.o posix_structs.o compat.o
 
 %.so: %.c
 	$(LINK.c) -shared $^ $(LOADLIBES) $(LDLIBS) -o $@

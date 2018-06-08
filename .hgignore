@@ -5,4 +5,5 @@ syntax: glob
 
 errno.o
 posix_structs.o
+compat.o
 flu.so

@@ -25,7 +25,7 @@ lang="en">
 <div class="chapter">
 <a id="manual"/><h1>4 - Manual</h1>
 
-<p>Here you can find a list of the functions present in the module and how to use them. Flu main module follows Lua 5.1 package system, see the <a href="http://www.lua.org/manual/5.1/">Lua 5.1 manual</a> for further explanations.</p>
+<p>Here you can find a list of the functions present in the module and how to use them. Flu main module follows Lua package system, see the <a href="http://www.lua.org/manual/5.1/">Lua 5.1 manual</a> or <a href="http://www.lua.org/manual/5.2/">Lua 5.2 manual</a> for further explanations.</p>
 
 <p>Quick links:</p>
 
@@ -71,7 +71,6 @@ lang="en">
         <li><a href="#fs.write">fs.write</a></li>
     </ul></li>
 </ul>
-
 	<div class="section">
 	<h2><a name="flu_functions">4.1 - flu module</a></h2>
 
@@ -177,7 +176,6 @@ flu.main(argv, luafs)
     <li><code>'block device'</code>, equivalent to <code>blk</code>, <code>rusr</code>, <code>wusr</code>, <code>rgrp</code> and <code>wgrp</code></li>
     <li><code>'other'</code>, equivalent to an empty set</li>
 </ul>
-
 
 		</div>
 
@@ -322,7 +320,6 @@ end
 <p>NOTE: The <a href="#fs.flush"><code>fs.flush</code></a> method may be called more than once for each <a href="#fs.open"><code>fs.open</code></a>. This happens if more than one file descriptor refers to an opened file due to dup(), dup2() or fork() calls. It is not possible to determine if a flush is final, so each flush should be treated equally. Multiple write-flush sequences are relatively rare, so this shouldn't be a problem.</p>
 
 <p>Filesystems shouldn't assume that <a href="#fs.flush"><code>fs.flush</code></a> will always be called after some writes, or that it will be called at all.</p>
-
 		</div>
 
 		<div class="function">
@@ -333,7 +330,6 @@ end
 <p>Release is called when there are no more references to an open file: all file descriptors are closed and all memory mappings are unmapped.</p>
 
 <p>For every open() call there will be exactly one release() call with the same flags and file descriptor. It is possible to have a file opened more than once, in which case only the last release will mean, that no more reads/writes will happen on the file. Errors in release are ignored.</p>
-
 		</div>
 
 		<div class="function">
@@ -396,7 +392,6 @@ end
 <p>Check file access permissions. This will be called for the <code>access()</code> system call. If the <code>'default_permissions'</code> mount option is given, this method is not called.</p>
 
 <p>This method is not called under Linux kernel versions 2.4.x.</p>
-
 		</div>
 
 		<div class="function">
@@ -407,7 +402,6 @@ end
 <p>If the file does not exist, first create it with the specified <code>mode</code>, and then open it.</p>
 
 <p>If this method is not implemented or under Linux kernel versions earlier than 2.6.15, the mknod() and open() methods will be called instead.</p>
-
 		</div>
 
 		<div class="function">
@@ -418,7 +412,6 @@ end
 <p>This method is called instead of the <a href="#fs.truncate"><code>fs.truncate</code></a> method if the truncation was invoked from an <code>ftruncate()</code> system call.</p>
 
 <p>If this method is not implemented or under Linux kernel versions earlier than 2.6.15, the <a href="#fs.truncate"><code>fs.truncate</code></a> method will be called instead.</p>
-
 		</div>
 
 		<div class="function">
@@ -429,7 +422,6 @@ end
 <p>This method is called instead of the <a href="#fs.getattr"><code>fs.getattr</code></a> method if the file information is available.</p>
 
 <p>Currently this is only called after the <a href="#fs.create"><code>fs.create</code></a> method if that is implemented (see above). Later it may be called for invocations of <code>fstat()</code> too.</p>
-
 		</div>
 
 		<div class="function">
@@ -449,7 +441,7 @@ end
 </div>
 
 <div class="chapter" id="footer">
-<small>Last update: 2012-12-12 01:42:14 GMT</small>
+<small>Last update: 2015-03-31 11:45:07 BST</small>
 </div>
 
 </body>

@@ -18,7 +18,7 @@ external_dependencies = {
 	},
 }
 dependencies = {
-	'lua ~> 5.1',
+	'lua >= 5.1, < 6',
 }
 build = {
 	type = 'builtin',
@@ -28,10 +28,11 @@ build = {
 				'flu.c',
 				'errno.c',
 				'posix_structs.c',
+				'compat.c',
 			},
 			defines = {
 				'FUSE_USE_VERSION=26',
-				'LUAMOD_API=LUALIB_API',
+				'FLU_API=LUALIB_API',
 				'luaopen_module=luaopen_flu',
 			},
 			libraries = {

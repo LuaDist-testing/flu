@@ -1,6 +1,7 @@
 
 ------------------------------------------------------------------------------
 
+readme '../README.md'
 index {
 	title = 'Flu',
 	header = [[Filesystems in Lua Userspace]],
@@ -63,6 +64,12 @@ footer()
 ------------------------------------------------------------------------------
 
 header('manual')
+
+local manual = [[
+Here you can find a list of the functions present in the module and how to use them. Flu main module follows Lua package system, see the [Lua 5.1 manual](http://www.lua.org/manual/5.1/) or [Lua 5.2 manual](http://www.lua.org/manual/5.2/) for further explanations.
+
+Quick links:
+]]
 
 local functions = {
 	{
@@ -163,7 +170,6 @@ Predefined modes:
 - `'char device'`, equivalent to `chr`, `rusr`, `wusr`, `rgrp` and `wgrp`
 - `'block device'`, equivalent to `blk`, `rusr`, `wusr`, `rgrp` and `wgrp`
 - `'other'`, equivalent to an empty set
-
 ]];
 			},
 			{
@@ -295,8 +301,7 @@ Flush is called on each [`fs.close`](#fs.close) of a file descriptor. So if a fi
 
 NOTE: The [`fs.flush`](#fs.flush) method may be called more than once for each [`fs.open`](#fs.open). This happens if more than one file descriptor refers to an opened file due to dup(), dup2() or fork() calls. It is not possible to determine if a flush is final, so each flush should be treated equally. Multiple write-flush sequences are relatively rare, so this shouldn't be a problem.
 
-Filesystems shouldn't assume that [`fs.flush`](#fs.flush) will always be called after some writes, or that it will be called at all.
-]];
+Filesystems shouldn't assume that [`fs.flush`](#fs.flush) will always be called after some writes, or that it will be called at all.]];
 			},
 			{
 				name = "fs.release";
@@ -306,8 +311,7 @@ Release an open file. See [`fs.open`](#fs.open) for a description of `fi`.
 
 Release is called when there are no more references to an open file: all file descriptors are closed and all memory mappings are unmapped.
 
-For every open() call there will be exactly one release() call with the same flags and file descriptor. It is possible to have a file opened more than once, in which case only the last release will mean, that no more reads/writes will happen on the file. Errors in release are ignored.
-]];
+For every open() call there will be exactly one release() call with the same flags and file descriptor. It is possible to have a file opened more than once, in which case only the last release will mean, that no more reads/writes will happen on the file. Errors in release are ignored.]];
 			},
 			{
 				name = "fs.fsync";
@@ -372,8 +376,7 @@ For every open() call there will be exactly one release() call with the same fla
 				doc = [[
 Check file access permissions. This will be called for the `access()` system call. If the `'default_permissions'` mount option is given, this method is not called.
 
-This method is not called under Linux kernel versions 2.4.x.
-]];
+This method is not called under Linux kernel versions 2.4.x.]];
 			},
 			{
 				name = "fs.create";
@@ -383,8 +386,7 @@ Create and open a file. `mode` is a set, see [`fs.getattr`](#fs.getattr) for a d
 
 If the file does not exist, first create it with the specified `mode`, and then open it.
 
-If this method is not implemented or under Linux kernel versions earlier than 2.6.15, the mknod() and open() methods will be called instead.
-]];
+If this method is not implemented or under Linux kernel versions earlier than 2.6.15, the mknod() and open() methods will be called instead.]];
 			},
 			{
 				name = "fs.ftruncate";
@@ -394,8 +396,7 @@ Change the size of an open file. See [`fs.open`](#fs.open) for a description of 
 
 This method is called instead of the [`fs.truncate`](#fs.truncate) method if the truncation was invoked from an `ftruncate()` system call.
 
-If this method is not implemented or under Linux kernel versions earlier than 2.6.15, the [`fs.truncate`](#fs.truncate) method will be called instead.
-]];
+If this method is not implemented or under Linux kernel versions earlier than 2.6.15, the [`fs.truncate`](#fs.truncate) method will be called instead.]];
 			},
 			{
 				name = "fs.fgetattr";
@@ -405,8 +406,7 @@ Get attributes from an open file.
 
 This method is called instead of the [`fs.getattr`](#fs.getattr) method if the file information is available.
 
-Currently this is only called after the [`fs.create`](#fs.create) method if that is implemented (see above). Later it may be called for invocations of `fstat()` too.
-]];
+Currently this is only called after the [`fs.create`](#fs.create) method if that is implemented (see above). Later it may be called for invocations of `fstat()` too.]];
 			--[=[
 			},{
 				name = "fs.lock";
@@ -434,57 +434,84 @@ Change the access and modification times of a file with nanosecond resolution. `
 	},
 }
 
-local funcstr = ""
+local function stitle(sectionid, section)
+	return "%chapterid%."..tostring(sectionid).." - "..section.title
+end
+
+local function ftitle(func)
+	local title = ""
+	if func.results then
+		title = title..table.concat(func.results, ", ").." = "
+	end
+	title = title..func.name
+	if func.parameters then
+		title = title..' ('..table.concat(func.parameters, ", ")..")"
+	end
+	return title
+end
+
+local hmanual = markdown(manual)
+manual = manual..'\n'
+hmanual = hmanual..[[
+<ul>
+]]
 for sectionid,section in ipairs(functions) do
-	funcstr = funcstr..[[
+	local title = stitle(sectionid, section)
+	local a = 'markdown-header-'..title:gsub('[^%w%s_%%]', ''):match('^%s*(.-)%s*$'):gsub('%s+', '-'):lower()
+	manual = manual..'- ['..section.title..'](#'..a..')\n'
+	hmanual = hmanual..[[
+    <li><a href="#]]..section.name..[[">]]..section.title..[[</a>
+    <ul>
+]]
+	local names = {}
+	for _,func in ipairs(section.functions) do
+		table.insert(names, func)
+	end
+	table.sort(names, function(a, b) return a.name < b.name end)
+	for _,func in ipairs(names) do
+		local title = ftitle(func)
+		local a = 'markdown-header-'..title:gsub('[^%w%s_]', ''):match('^%s*(.-)%s*$'):gsub('%s+', '-'):lower()
+		manual = manual..'    - ['..func.name..'](#'..a..')\n'
+		hmanual = hmanual..[[
+        <li><a href="#]]..func.name..[[">]]..func.name..[[</a></li>
+]]
+	end
+	hmanual = hmanual..[[
+    </ul></li>
+]]
+end
+manual = manual..'\n'
+hmanual = hmanual..[[
+</ul>
+]]
+
+for sectionid,section in ipairs(functions) do
+	local title = stitle(sectionid, section)
+	manual = manual..'---\n\n## '..title..'\n\n'..section.doc..'\n\n'
+	hmanual = hmanual..[[
 	<div class="section">
-	<h2><a name="]]..section.name..[[">%chapterid%.]]..tostring(sectionid).." - "..section.title..[[</a></h2>
+	<h2><a name="]]..section.name..[[">]]..title..[[</a></h2>
 ]]..markdown(section.doc)..[[
 
 ]]
 	for _,func in ipairs(section.functions) do
-		funcstr = funcstr..[[
+		local title = ftitle(func)
+		manual = manual..'---\n\n### `'..title..'`\n\n'..func.doc..'\n\n'
+		hmanual = hmanual..[[
 		<div class="function">
-		<h3><a name="]]..func.name..[["><code>]]
-		if func.results then
-			funcstr = funcstr..table.concat(func.results, ", ").." = "
-		end
-		funcstr = funcstr..func.name
-		if func.parameters then
-			funcstr = funcstr..' ('..table.concat(func.parameters, ", ")..")"
-		end
-		funcstr = funcstr..[[</code></a></h3>
+		<h3><a name="]]..func.name..[["><code>]]..title..[[</code></a></h3>
 ]]..markdown(func.doc)..[[
 		</div>
 
 ]]
 	end
-	funcstr = funcstr..[[
+	hmanual = hmanual..[[
 	</div>
 
 ]]
 end
 
-local manual = [[
-Here you can find a list of the functions present in the module and how to use them. Flu main module follows Lua 5.1 package system, see the [Lua 5.1 manual](http://www.lua.org/manual/5.1/) for further explanations.
-
-Quick links:
-
-]]
-for _,section in ipairs(functions) do
-	manual = manual..'- ['..section.title..'](#'..section.name..')\n'
-	local names = {}
-	for _,func in ipairs(section.functions) do
-		table.insert(names, func.name)
-	end
-	table.sort(names)
-	for _,name in ipairs(names) do
-		manual = manual..'    - ['..name..'](#'..name..')\n'
-	end
-end
-manual = markdown(manual)
-manual = manual..funcstr
-chapter('manual', "Manual", manual, nil, true)
+chapter('manual', "Manual", manual, nil, hmanual)
 
 footer()
 
@@ -495,12 +522,12 @@ header('examples')
 chapter('examples', "Examples", [[
 Here are some filesystem examples. [`hellofs`](#hellofs) is just a minimal example. [`luafs`](#luafs) is a basic filesystem that exposes a Lua table as a directory. It can be used as a model to expose some data from a Lua state in your own applications.]]--[[ [`fwfs`](#fwfs) is a forwarding filesystem, that can be used as a base to make on the fly operations on file I/O.
 ]], { [[
-## <a name="hellofs">%chapterid%.1 - hellofs</a>
+## %chapterid%.1 - hellofs
 
 `hellofs` is the Hello World! of FUSE filesystems. It creates a directory with a single file called `hello` that contain the string `"Hello World!"`.
 
 Example:
-    <pre>
+
     $ mkdir tmpdir
     $ ./hellofs.lua tmpdir
     $ ls tmpdir
@@ -509,14 +536,15 @@ Example:
     Hello World!
     $ fusermount -u tmpdir
 
-Source code: [hellofs.lua](hellofs.lua)
+Source code: [hellofs.lua](http://piratery.net/flu/hellofs.lua)
 
 ]], [[
-## <a name="luafs">%chapterid%.2 - luafs</a>
+## %chapterid%.2 - luafs
 
 `luafs` expose a table as a directory. The subtables are exposed as subdirectories, while the string fields are exposed as regular files. You can create new files, and write to them: that will create new strings in the table hierarchy.
 
 Example:
+
     $ mkdir tmpdir
     $ ./luafs.lua tmpdir
     $ ls tmpdir
@@ -535,10 +563,10 @@ Example:
     foo
     $ fusermount -u tmpdir
 
-Source code: [luafs.lua](luafs.lua)
+Source code: [luafs.lua](http://piratery.net/flu/luafs.lua)
 
 ]], --[[
-## <a name="luafs">%chapterid%.3 - fwfs</a>
+## %chapterid%.3 - fwfs
 
 `fwfs` creates a directory that will forward all I/O to another directory. It's meant to be used as a base for any filesystem that is backed on disk, and that is doing something to the files on the fly. For example it can do filesystem encryption, it can make several directories on different disks appear as a single one, etc.
 
@@ -561,7 +589,7 @@ Example:
     foo
     $ fusermount -u dstdir
 
-Source code: [fwfs.lua](fwfs.lua)
+Source code: [fwfs.lua](http://piratery.net/flu/fwfs.lua)
 ]]})
 
 footer()

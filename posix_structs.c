@@ -10,9 +10,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-
-#define LUA_LIB
 #include <lua.h>
+#include "compat.h"
 
 /****************************************************************************/
 
@@ -413,7 +412,7 @@ static int lua__dirent__newindex(lua_State* L)
 			else if (!strcmp(k, "off")) { if (lua_isnumber(L, 3)) ent->d_off = lua_tonumber(L, 3); }
 			else if (!strcmp(k, "reclen")) { if (lua_isnumber(L, 3)) ent->d_reclen = lua_tonumber(L, 3); }
 			else if (!strcmp(k, "type")) { if (lua_isnumber(L, 3)) ent->d_reclen = lua_tonumber(L, 3); }
-			else if (!strcmp(k, "name")) { if (lua_isstring(L, 3)) strncpy(ent->d_name, lua_tostring(L, 3), min(NAME_MAX, lua_objlen(L, 3))+1); }
+			else if (!strcmp(k, "name")) { if (lua_isstring(L, 3)) strncpy(ent->d_name, lua_tostring(L, 3), min(NAME_MAX, rawlen(L, 3))+1); }
 		}
 	}
 	return 0;
@@ -551,7 +550,7 @@ static int lua__timeval_array__index(lua_State* L)
 			lua_createtable(L, 0, 1);
 			lua_pushvalue(L, 1);
 			lua_setfield(L, -2, "array");
-			lua_setfenv(L, -2);
+			setuservalue(L, -2);
 			return 1;
 		}
 		else

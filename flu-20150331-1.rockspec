@@ -1,16 +1,16 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = 'Flu'
-version = '20121212-1'
+version = '20150331-1'
 -- LuaDist source
 source = {
-  tag = "20121212-1",
+  tag = "20150331-1",
   url = "git://github.com/LuaDist-testing/flu.git"
 }
 -- Original source
 -- source = {
--- 	url = 'http://hg.piratery.net/flu/get/2eff0d56e873a5b4cfa1c775c32a0d9e33ab424f.tar.gz',
--- 	dir = 'doub-flu-2eff0d56e873',
+-- 	url = 'http://hg.piratery.net/flu/get/a7daae9863397d186a48d1c2afe10f289fad93a5.tar.gz',
+-- 	dir = 'doub-flu-a7daae986339',
 -- }
 description = {
 	summary = "Filesystems in Lua Userspace.",
@@ -26,7 +26,7 @@ external_dependencies = {
 	},
 }
 dependencies = {
-	'lua ~> 5.1',
+	'lua >= 5.1, < 6',
 }
 build = {
 	type = 'builtin',
@@ -36,10 +36,11 @@ build = {
 				'flu.c',
 				'errno.c',
 				'posix_structs.c',
+				'compat.c',
 			},
 			defines = {
 				'FUSE_USE_VERSION=26',
-				'LUAMOD_API=LUALIB_API',
+				'FLU_API=LUALIB_API',
 				'luaopen_module=luaopen_flu',
 			},
 			libraries = {

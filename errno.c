@@ -1,10 +1,10 @@
 #include <errno.h>
 #include <string.h>
-#define LUA_LIB
 #include <lua.h>
 #include <lauxlib.h>
 #include <stdlib.h>
 #include <attr/xattr.h>
+#include "compat.h"
 
 /****************************************************************************/
 
@@ -54,7 +54,7 @@ static int errno__tostring(lua_State* L)
 	return 1;
 }
 
-static const luaL_reg errno_mt[] = {
+static const luaL_Reg errno_mt[] = {
 	{"__tostring", errno__tostring},
 	{0, 0},
 };
@@ -62,7 +62,7 @@ static const luaL_reg errno_mt[] = {
 void push_errno_table(lua_State* L)
 {
 	if (luaL_newmetatable(L, "errno"))
-		luaL_register(L, 0, errno_mt);
+		setfuncs(L, errno_mt, 0);
 	lua_pop(L, 1);
 	
 	lua_newtable(L);
