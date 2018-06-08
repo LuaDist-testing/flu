@@ -20,6 +20,7 @@ end
 --os.execute('convert -resize 128x128 logo.ps logo.png')
 --os.execute('convert -resize 384x384 logo.ps -crop 256x128+64+0 logo.png')
 --os.execute('convert -resize 448x448 logo.ps -crop 128x128+300+40 logo.png')
+os.execute('convert -resize 448x448 logo.ps -crop 128x128+300+40 logo.png')
 
 ------------------------------------------------------------------------------
 
@@ -104,7 +105,7 @@ io.output(io.open(file_index, "wb"))
 header()
 
 chapter("About Flu", [[
-Flu is a Lua binding for [FUSE](http://fuse.sourceforge.net/), which is a library allowing creation filesystem drivers run in userspace. Flu is a high level binding, using basic Lua types rather than userdata whenever possible.
+Flu is a Lua binding for [FUSE](http://fuse.sourceforge.net/), which is a library allowing creation of filesystem drivers run in userspace. Flu is a high level binding, using basic Lua types rather than userdata whenever possible.
 
 Flu tries to be complete, but is not supporting obsolete APIs. The binding is closely following the FUSE API, so in most case you can use FUSE documentation if the present page is not clear enough. The missing functions are missing because I've not used them yet. I can add them on request (a use case could be helpful for non-trivial ones).
 
@@ -117,7 +118,6 @@ Feel free to ask for further developments. I can't guarantee that I'll develop e
 ## Credits
 
 This module is written and maintained by [Jérôme Vuarand](mailto:jerome.vuarand@gmail.com). It is a fork of [LUSE](http://luse.luaforge.net/), a previous Lua-FUSE binding from the same author. LUSE was low level and rather complicated to use, while Flu tries its best to be simple.
-
 
 Flu is available under a [MIT-style license](LICENSE.txt).
 ]])
@@ -169,7 +169,7 @@ Starts a new filesystem daemon. `argv` is an array containing additionnal parame
 		error(flu.errno.ENOSYS)
 	end
     local argv = {"luafs", select(2, ...)}
-    flu.main(argv, fs)
+    flu.main(argv, luafs)
 ]];
 			},
 			{
@@ -182,7 +182,7 @@ Starts a new filesystem daemon. `argv` is an array containing additionnal parame
 	{
 		name = "fuse_functions";
 		title = "Filesystem methods";
-		doc = [[These methods may be present in the `fs` object passed to [`flu.main`](#flu.main). They are all optionnal, though without them your filesystem may not work properly. See example filesystems available in Flu packages for minimal requirements.
+		doc = [[These methods may be present in the `fs` object passed to [`flu.main`](#flu.main). They are all optional, though without them your filesystem may not work properly. See example filesystems available in Flu packages for minimal requirements.
 
 Below each functon is described with the parameters they are called with, and the expected return values on normal operation. Most functions though have no return value. To express error conditions, regular Lua error should be thrown with `error`. The thrown error though have to be errno userdata values as found in the flu.errno table. For example:
 
@@ -201,7 +201,7 @@ Get file attributes. `stat` should be a table, with some of the following fields
 
 - `dev`, number, ID of device containing file
 - `ino`, number, inode number
-- `mode`, a set or a string, protection. If mode is a set, it's made of the recognized mode flags listed below. If it's a string, it's one of the predefined modes described below.
+- `mode`, a set or a string, file type and permissions. If mode is a set, it's made of the recognized mode flags listed below. If it's a string, it's one of the predefined modes described below.
 - `nlink`, number, number of hard links
 - `uid`, number, user ID of owner
 - `gid`, number, group ID of owner

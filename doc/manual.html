@@ -87,7 +87,7 @@ function luafs.getattr(path, stat)
     error(flu.errno.ENOSYS)
 end
 local argv = {"luafs", select(2, ...)}
-flu.main(argv, fs)
+flu.main(argv, luafs)
 </code></pre>
 
 		</div>
@@ -103,7 +103,7 @@ flu.main(argv, fs)
 	<div class="section">
 	<h2><a name="fuse_functions">4.2 - Filesystem methods</a></h2>
 
-<p>These methods may be present in the <code>fs</code> object passed to <a href="#flu.main"><code>flu.main</code></a>. They are all optionnal, though without them your filesystem may not work properly. See example filesystems available in Flu packages for minimal requirements.</p>
+<p>These methods may be present in the <code>fs</code> object passed to <a href="#flu.main"><code>flu.main</code></a>. They are all optional, though without them your filesystem may not work properly. See example filesystems available in Flu packages for minimal requirements.</p>
 
 <p>Below each functon is described with the parameters they are called with, and the expected return values on normal operation. Most functions though have no return value. To express error conditions, regular Lua error should be thrown with <code>error</code>. The thrown error though have to be errno userdata values as found in the flu.errno table. For example:</p>
 
@@ -122,7 +122,7 @@ flu.main(argv, fs)
 <ul>
     <li><code>dev</code>, number, ID of device containing file</li>
     <li><code>ino</code>, number, inode number</li>
-    <li><code>mode</code>, a set or a string, protection. If mode is a set, it's made of the recognized mode flags listed below. If it's a string, it's one of the predefined modes described below.</li>
+    <li><code>mode</code>, a set or a string, file type and permissions. If mode is a set, it's made of the recognized mode flags listed below. If it's a string, it's one of the predefined modes described below.</li>
     <li><code>nlink</code>, number, number of hard links</li>
     <li><code>uid</code>, number, user ID of owner</li>
     <li><code>gid</code>, number, group ID of owner</li>
@@ -449,7 +449,7 @@ end
 </div>
 
 <div class="chapter" id="footer">
-<small>Last update: 2010-10-19 02:07:50 CEST</small>
+<small>Last update: 2010-10-20 23:30:47 CEST</small>
 </div>
 
 </body>

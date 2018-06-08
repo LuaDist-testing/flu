@@ -1,24 +1,19 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = 'Flu'
-version = '20101020-1'
+version = '20121106-1'
 -- LuaDist source
 source = {
-  tag = "20101020-1",
+  tag = "20121106-1",
   url = "git://github.com/LuaDist-testing/flu.git"
 }
 -- Original source
 -- source = {
--- 	url = 'http://hg.piratery.net/flu/archive/30dbbc0c3b5817ccfe8193b4efceacaddeede0e6.tar.gz',
--- 	dir = 'flu-30dbbc0c3b5817ccfe8193b4efceacaddeede0e6',
+-- 	url = 'http://hg.piratery.net/flu/get/cc8649079e3a29ec95a5fe8afbe156c8bd016ccd.tar.gz',
+-- 	dir = 'doub-flu-cc8649079e3a',
 -- }
 description = {
 	summary = "Filesystems in Lua Userspace.",
-	detailed = [[
-Flu is a Lua binding for FUSE, which is a library allowing creation filesystem
-drivers run in userspace. Flu is a high level binding, using basic Lua types
-rather than userdata whenever possible.
-	]],
 	homepage = 'http://piratery.net/flu/',
 	license = 'MIT',
 }
